@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="space_small">3dp</dimen>
+    <dimen name="space_normal">5dp</dimen>
+    <dimen name="space_nl">8dp</dimen>
+    <dimen name="space_large">12dp</dimen>
+
+
+    <dimen name="text_s">12sp</dimen>
+    <dimen name="text_n">16sp</dimen>
+    <dimen name="text_l">18sp</dimen>
+    <dimen name="text_h">22sp</dimen>
+
+    <dimen name="size_s">20dp</dimen>
+    <dimen name="size_sm">25dp</dimen>
+    <dimen name="size_m">30dp</dimen>
+    <dimen name="size_mn">35dp</dimen>
+    <dimen name="size_n">40dp</dimen>
+    <dimen name="size_l">60dp</dimen>
+    <dimen name="size_xl">80dp</dimen>
+    <dimen name="size_card">120dp</dimen>
+    <dimen name="size_image">100dp</dimen>
+</resources>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@color/white"
+        tools:context=".ui.fragments.TravelDetailsFragment">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary">
+
+                <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    <ImageView
+                            android:id="@+id/imgBack"
+                            android:src="@drawable/ic_arrow_back"
+                            android:padding="@dimen/space_small"
+                            android:layout_width="@dimen/size_sm"
+                            android:layout_height="@dimen/size_sm" />
+
+                    <TextView
+                            android:id="@+id/tvTitle"
+                            android:layout_toEndOf="@id/imgBack"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="@dimen/space_normal"
+                            android:paddingStart="@dimen/space_normal"
+                            android:paddingEnd="@dimen/space_normal"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/text_l"
+                            android:text="Journey Details"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+
+                </RelativeLayout>
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+            <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <TextView
+                        android:id="@+id/tvFromCity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Mumbai"
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/space_normal"
+                        android:padding="@dimen/space_normal"
+                        android:textSize="@dimen/text_h" />
+
+                <TextView
+                        android:id="@+id/tvFromDay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="09:30 PM \n01 Friday"
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/space_normal"
+                        android:padding="@dimen/space_normal"
+                        android:textSize="@dimen/text_l" />
+
+
+                <TextView
+                        android:id="@+id/tvFromMonth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Aug 2019"
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/space_normal"
+                        android:padding="@dimen/space_normal"
+                        android:textSize="@dimen/text_s" />
+
+
+            </LinearLayout>
+
+
+            <TextView
+                    android:text="To"
+                    android:layout_margin="@dimen/space_small"
+                    android:gravity="center_vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"/>
+
+
+            <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <TextView
+                        android:id="@+id/tvToCity"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Jalna"
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/space_normal"
+                        android:padding="@dimen/space_normal"
+                        android:textSize="@dimen/text_h" />
+
+                <TextView
+                        android:id="@+id/toDay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="09:30 AM \n02 Saturday"
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/space_normal"
+                        android:padding="@dimen/space_normal"
+                        android:textSize="@dimen/text_l" />
+
+
+                <TextView
+                        android:id="@+id/toMonth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Aug 2019"
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/space_normal"
+                        android:padding="@dimen/space_normal"
+                        android:textSize="@dimen/text_s" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+        <TextView
+                android:text="Luggage"
+                android:layout_marginStart="@dimen/space_large"
+                android:layout_marginEnd="@dimen/space_large"
+                android:layout_marginTop="@dimen/space_normal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_margin="@dimen/space_large"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="2"
+                tools:listitem="@layout/item_images"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+
+    </LinearLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

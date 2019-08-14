@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@color/white"
+        tools:context=".ui.fragments.CreateTravelFragment">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary">
+
+                <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    <ImageView
+                            android:id="@+id/imgBack"
+                            android:src="@drawable/ic_arrow_back"
+                            android:padding="@dimen/space_small"
+                            android:layout_width="@dimen/size_sm"
+                            android:layout_height="@dimen/size_sm" />
+
+                    <TextView
+                            android:id="@+id/tvTitle"
+                            android:layout_toEndOf="@id/imgBack"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="@dimen/space_normal"
+                            android:paddingStart="@dimen/space_normal"
+                            android:paddingEnd="@dimen/space_normal"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/text_l"
+                            android:text="New Journey"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+
+                </RelativeLayout>
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/mfFrom"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_large"
+                android:layout_marginStart="@dimen/space_large"
+                android:layout_marginTop="@dimen/space_large"
+                android:background="@drawable/background_border"
+                app:boxStrokeWidth="5dp"
+                app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etFrom"
+                    android:background="@color/transparent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="From"
+                    android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/mfTo"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/space_large"
+                android:layout_marginStart="@dimen/space_large"
+                android:layout_marginTop="@dimen/space_large"
+                android:background="@drawable/background_border"
+                app:boxStrokeWidth="5dp"
+                app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etTo"
+                    android:background="@color/transparent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="To"
+                    android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_large"
+                android:weightSum="2"
+                android:orientation="horizontal">
+
+
+
+            <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/space_large"
+                    android:layout_marginEnd="@dimen/space_small"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:text="Boarding"
+                        android:layout_margin="@dimen/space_small"
+                        android:gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <TextView
+                        android:id="@+id/tvFromDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/background_border"
+                        android:layout_marginTop="@dimen/space_normal"
+                        android:padding="@dimen/space_normal"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_l" />
+
+                <TextView
+                        android:id="@+id/tvFromTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_normal"
+                        android:background="@drawable/background_border"
+                        android:padding="@dimen/space_normal"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_l" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_marginStart="@dimen/space_small"
+                    android:layout_marginEnd="@dimen/space_large"
+                    android:layout_height="wrap_content">
+
+                <TextView
+                        android:text="Arrival"
+                        android:layout_margin="@dimen/space_small"
+                        android:gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                <TextView
+                        android:id="@+id/tvToDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_normal"
+                        android:background="@drawable/background_border"
+                        android:padding="@dimen/space_normal"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_l" />
+
+                <TextView
+                        android:id="@+id/tvToTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_normal"
+                        android:background="@drawable/background_border"
+                        android:padding="@dimen/space_normal"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/text_l" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+                android:text="Luggage"
+                android:layout_marginStart="@dimen/space_large"
+                android:layout_marginEnd="@dimen/space_large"
+                android:layout_marginTop="@dimen/space_normal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        <androidx.cardview.widget.CardView
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                app:cardCornerRadius="10dp"
+                app:cardBackgroundColor="@color/cardview_dark_background">
+
+            <TextView
+                    android:id="@+id/tvAddImage"
+                    android:textSize="@dimen/text_n"
+                    android:text="Add Luggage Images"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:drawablePadding="@dimen/space_large"
+                    android:paddingStart="@dimen/space_large"
+                    android:paddingEnd="@dimen/space_large"
+                    android:paddingTop="@dimen/space_small"
+                    android:paddingBottom="@dimen/space_small"
+                    android:drawableStart="@drawable/ic_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_margin="@dimen/space_large"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="2"
+                android:paddingBottom="@dimen/size_n"
+                tools:listitem="@layout/item_images"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+
+    </LinearLayout>
+
+    <Button
+            android:id="@+id/btnSave"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_mn"
+            android:layout_margin="@dimen/space_normal"
+            android:background="@drawable/button_green"
+            android:text="Save"
+            android:textColor="@color/white" />
+
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

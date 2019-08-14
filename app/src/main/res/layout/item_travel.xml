@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_card"
+        app:cardUseCompatPadding="true">
+
+
+    <LinearLayout
+            android:padding="@dimen/space_normal"
+            android:layout_width="match_parent"
+            android:weightSum="3"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+        <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+            <TextView
+                    android:id="@+id/tvDay"
+                    android:textSize="@dimen/text_l"
+                    android:textColor="@color/colorPrimary"
+                    android:text="01\nFriday"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"/>
+
+            <TextView
+                    android:id="@+id/tvTime"
+                    android:textSize="@dimen/text_n"
+                    android:textColor="@color/orange"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/space_small"
+                    android:layout_marginBottom="@dimen/space_small"
+                    android:text="08:30 PM"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+            <TextView
+                    android:id="@+id/tvMonth"
+                    android:textSize="@dimen/text_n"
+                    android:textColor="@color/grayDark"
+                    android:gravity="center"
+                    android:text="Aug 2019"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_gravity="center"
+                android:layout_height="match_parent">
+
+            <TextView
+                    android:id="@+id/tvFrom"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:layout_margin="@dimen/space_normal"
+                    android:text="Mumbai"
+                    android:ellipsize="end"
+                    android:textSize="@dimen/text_l"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            <TextView
+                    android:text="To"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            <TextView
+                    android:id="@+id/tvTo"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:layout_margin="@dimen/space_normal"
+                    android:text="Jalna"
+                    android:ellipsize="end"
+                    android:textSize="@dimen/text_l"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+
+</androidx.cardview.widget.CardView>
