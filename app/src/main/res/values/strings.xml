@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">My Travels</string>
 
+    <string name="permission_title">Permission Needed!</string>
+    <string name="permission_message">This app needs Camera, SMS, Storage, Location and Phone State permissions.</string>
+    <string name="permission_needed">Permission Needed</string>
+    <string name="permission_phone">This Feature Need Phone State Permission.</string>
+    <string name="permission_camera">This Feature Need Camera Permission.</string>
+    <string name="permission_camera_storage">This Feature Need Camera and Storage Permissions.</string>
+    <string name="permission_storage">This Feature Need Storage Permission.</string>
+
 </resources>

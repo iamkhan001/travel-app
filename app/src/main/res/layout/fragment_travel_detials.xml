@@ -28,7 +28,7 @@
                         android:layout_height="wrap_content">
 
                     <ImageView
-                            android:id="@+id/imgBack"
+                            android:id="@+id/imgBackDetails"
                             android:src="@drawable/ic_arrow_back"
                             android:padding="@dimen/space_small"
                             android:layout_width="@dimen/size_sm"
@@ -36,7 +36,7 @@
 
                     <TextView
                             android:id="@+id/tvTitle"
-                            android:layout_toEndOf="@id/imgBack"
+                            android:layout_toEndOf="@id/imgBackDetails"
                             android:layout_centerVertical="true"
                             android:layout_marginStart="@dimen/space_normal"
                             android:paddingStart="@dimen/space_normal"
@@ -127,7 +127,7 @@
                         android:textSize="@dimen/text_h" />
 
                 <TextView
-                        android:id="@+id/toDay"
+                        android:id="@+id/tvToDay"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="09:30 AM \n02 Saturday"
@@ -138,7 +138,7 @@
 
 
                 <TextView
-                        android:id="@+id/toMonth"
+                        android:id="@+id/tvToMonth"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Aug 2019"

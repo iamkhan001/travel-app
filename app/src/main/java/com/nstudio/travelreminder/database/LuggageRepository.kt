@@ -7,7 +7,7 @@ import com.nstudio.travelreminder.database.entitiy.Luggage
 import java.util.concurrent.ExecutionException
 
 
-class LuggageRepository (private val db:AppDatabase,
+class LuggageRepository (private val db:TravelDatabase,
                          private val luggageDao: LuggageDao,
                          private val luggages: LiveData<List<Luggage>>){
 

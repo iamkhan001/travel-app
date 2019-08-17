@@ -8,16 +8,14 @@ import com.nstudio.travelreminder.database.entitiy.Travel
 import androidx.room.Update
 import androidx.lifecycle.LiveData
 
-
-
-
-
-
 @Dao
 interface TravelDao{
 
     @Query("SELECT * FROM travel ORDER BY id DESC")
     fun getAllTravels(): LiveData<List<Travel>>
+
+    @Query("SELECT * FROM travel ORDER BY id DESC")
+    fun getAllTravelsVal(): List<Travel>
 
     @Query("SELECT COUNT(*) from travel")
     fun countTravels(): Int
@@ -40,7 +38,6 @@ interface TravelDao{
 
     @Delete
     fun delete(user: Travel)
-
 
     @Query("DELETE FROM travel")
     fun deleteAll()

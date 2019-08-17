@@ -21,9 +21,11 @@ public class JourneyListAdapter extends RecyclerView.Adapter<JourneyListAdapter.
     private SimpleDateFormat formatBase;
     private SimpleDateFormat formatTime;
     private SimpleDateFormat formatMonth;
+    private OnTravelClickListener clickListener;
 
-    public JourneyListAdapter(List<Travel> list) {
+    public JourneyListAdapter(List<Travel> list,OnTravelClickListener clickListener) {
         this.list = list;
+        this.clickListener = clickListener;
         formatBase =  new SimpleDateFormat("dd MMM yy hh:mm a", Locale.ENGLISH);
         formatTime =  new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
         formatMonth =  new SimpleDateFormat("MMM yy", Locale.ENGLISH);
@@ -87,7 +89,17 @@ public class JourneyListAdapter extends RecyclerView.Adapter<JourneyListAdapter.
             tvTo = itemView.findViewById(R.id.tvTo);
             tvTime = itemView.findViewById(R.id.tvTime);
 
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    clickListener.onTravelClick(list.get(getAdapterPosition()));
+                }
+            });
         }
+    }
+
+    public interface OnTravelClickListener{
+        void onTravelClick(Travel travel);
     }
 
 }

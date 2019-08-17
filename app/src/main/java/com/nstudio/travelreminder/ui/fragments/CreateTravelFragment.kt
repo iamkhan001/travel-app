@@ -1,6 +1,7 @@
 package com.nstudio.travelreminder.ui.fragments
 
 
+import android.Manifest
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -18,12 +19,41 @@ import android.app.DatePickerDialog
 import android.util.Log
 import java.text.ParseException
 import android.app.TimePickerDialog
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
+import com.nstudio.travelreminder.database.entitiy.Travel
+import com.nstudio.travelreminder.ui.viewModels.TravelViewModel
+import android.provider.MediaStore
+import androidx.core.content.FileProvider
+import android.content.Intent
+import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Environment
+import android.provider.Settings
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import java.io.File
+import java.io.IOException
 
 
 class CreateTravelFragment : Fragment() {
 
     lateinit var activityInteractionListener: OnActivityInteractionListener
+
+    companion object {
+
+        private const val PERMISSION_CALLBACK_CONSTANT = 100
+        private const val REQUEST_PERMISSION_SETTING = 101
+        private const val READ_REQUEST_CODE = 103
+        private const val REQUEST_IMAGE_CAPTURE = 104
+
+    }
+
 
     private lateinit var  timeFormat: SimpleDateFormat
     private lateinit var  dateFormat: SimpleDateFormat
@@ -40,12 +70,39 @@ class CreateTravelFragment : Fragment() {
     private var boardingTime = ""
     private var arrivalDate = ""
     private var arrivalTime = ""
+    private lateinit var viewModel: TravelViewModel
+    private var isPhotoCaptured = false
+    private var photoFile:File? = null
+    private var photoURI: Uri? = null
+    private var mCurrentPhotoPath = ""
 
     private val methodSelectListener = ImageChooserDialog.OnMethodSelectListener { m ->
         if(m==0){
+            //camera
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            if (takePictureIntent.resolveActivity(context!!.packageManager) != null) {
+                photoFile = null
+                try {
+                    photoFile = createImageFile()
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    return@OnMethodSelectListener
+                }
+
+                if (photoFile != null) {
+                    photoURI = FileProvider.getUriForFile(
+                        context!!,
+                        "com.nstudio.android.fileprovider",
+                        photoFile!!
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                }
+            }
 
         }else{
-
+            //file
+            openFilePicker();
         }
     }
 
@@ -62,6 +119,8 @@ class CreateTravelFragment : Fragment() {
     ): View? {
 
         //dateFormat = SimpleDateFormat("EE dd MMM yy", Locale.ENGLISH)
+
+        viewModel = ViewModelProviders.of(activity!!).get(TravelViewModel::class.java)
 
         dateFormat = SimpleDateFormat("dd MMM yy", Locale.ENGLISH)
         timeFormat = SimpleDateFormat("hh:mm a", Locale.ENGLISH)
@@ -86,8 +145,10 @@ class CreateTravelFragment : Fragment() {
         }
 
         tvAddImage.setOnClickListener {
-            val imageChooserDialog = ImageChooserDialog(context!!,methodSelectListener)
-            imageChooserDialog.show()
+            if (checkPermissions()){
+                val imageChooserDialog = ImageChooserDialog(context!!,methodSelectListener)
+                imageChooserDialog.show()
+            }
         }
 
         tvFromDate.setOnClickListener {
@@ -191,8 +252,17 @@ class CreateTravelFragment : Fragment() {
                     return@setOnClickListener
                 }
 
+                val travel = Travel(
+                    null,
+                    from,
+                    to,
+                    "$boardingDate $boardingTime",
+                    "$arrivalDate $arrivalTime"
+                )
 
-
+                viewModel.addTravel(travel)
+                Snackbar.make(v,"Journey Added Successfully",Snackbar.LENGTH_SHORT).show()
+                activity!!.supportFragmentManager.popBackStackImmediate()
 
             }
         }
@@ -282,6 +352,245 @@ class CreateTravelFragment : Fragment() {
         tvToTime.text = arrivalTime
 
         Log.e(tag, "to time $arrivalTime")
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "JPEG_" + timeStamp + "_"
+        val storageDir = context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val image = File.createTempFile(
+            imageFileName, /* prefix */
+            ".jpg", /* suffix */
+            storageDir      /* directory */
+        )
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.absolutePath
+        return image
+    }
+
+
+    @Throws(IOException::class)
+    private fun getBitmapFromUri(uri: Uri): Bitmap {
+        val parcelFileDescriptor = context!!.contentResolver.openFileDescriptor(uri, "r")!!
+        val fileDescriptor = parcelFileDescriptor.fileDescriptor
+        val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
+        parcelFileDescriptor.close()
+        return image
+    }
+
+    private fun galleryAddPic() {
+        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+        val f = File(mCurrentPhotoPath)
+        val contentUri = Uri.fromFile(f)
+        mediaScanIntent.data = contentUri
+        context!!.sendBroadcast(mediaScanIntent)
+    }
+
+
+    private fun openFilePicker() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "image/*"
+        startActivityForResult(intent, READ_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+      if (requestCode == READ_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null) {
+                photoURI = data.data
+                if (photoURI != null) {
+                    Log.e("uri", "Uri: " + photoURI.toString())
+                    try {
+
+                        val bitmap = getBitmapFromUri(photoURI!!)
+
+                        isPhotoCaptured = false
+                    } catch (e:Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            galleryAddPic()
+            var bitmap:Bitmap
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(context!!.contentResolver, photoURI)
+                bitmap = cropAndScale(bitmap, 300)
+
+                isPhotoCaptured = true
+            } catch (e:Exception) {
+                e.printStackTrace()
+            }
+
+        }
+
+    }
+
+    fun cropAndScale(source: Bitmap, scale: Int): Bitmap {
+        var source = source
+        val factor = if (source.height <= source.width) source.height else source.width
+        val longer = if (source.height >= source.width) source.height else source.width
+        val x = if (source.height >= source.width) 0 else (longer - factor) / 2
+        val y = if (source.height <= source.width) 0 else (longer - factor) / 2
+        source = Bitmap.createBitmap(source, x, y, factor, factor)
+        source = Bitmap.createScaledBitmap(source, scale, scale, false)
+        return source
+    }
+
+    private fun checkPermissions(): Boolean {
+        var camera = false
+        var storage = false
+
+        if (ActivityCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.CAMERA
+            ) !== PackageManager.PERMISSION_GRANTED
+        ) {
+            camera = true
+        }
+        if (ActivityCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) !== PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
+                context!!,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) !== PackageManager.PERMISSION_GRANTED
+        ) {
+            storage = true
+        }
+
+
+        if (!camera && !storage) {
+            return true
+        }
+
+        val builder = AlertDialog.Builder(context)
+
+        if (storage && camera) {
+            val permissionsRequired = arrayOf(
+                Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+
+            builder.setTitle(R.string.permission_title)
+            builder.setMessage(R.string.permission_camera_storage)
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity!!, Manifest.permission.CAMERA)
+                && ActivityCompat.shouldShowRequestPermissionRationale(activity!!, Manifest.permission.READ_EXTERNAL_STORAGE)
+                && ActivityCompat.shouldShowRequestPermissionRationale(activity!!, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            ) {
+
+                builder.setPositiveButton("Grant") { dialog, _ ->
+                    dialog.cancel()
+                    ActivityCompat.requestPermissions(
+                        activity!!,
+                        permissionsRequired,
+                        PERMISSION_CALLBACK_CONSTANT
+                    )
+                }
+
+            } else {
+                //Previously Permission Request was cancelled with Don't Ask Again',
+
+                builder.setPositiveButton("Grant") { dialog, _ ->
+                    dialog.cancel()
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri = Uri.fromParts("package", context!!.packageName, null)
+                    intent.data = uri
+                    startActivityForResult(intent, REQUEST_PERMISSION_SETTING)
+                    Toast.makeText(
+                        context!!,
+                        "Go to Permissions and Allow Camera and Storage Permissions",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+
+        } else if (camera) {
+            val permissionsRequired = arrayOf<String>(Manifest.permission.CAMERA)
+
+            builder.setTitle(R.string.permission_title)
+            builder.setMessage(R.string.permission_camera)
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    activity!!,
+                    Manifest.permission.CAMERA
+                )
+            ) {
+                builder.setPositiveButton("Grant") { dialog, _ ->
+                    dialog.cancel()
+                    ActivityCompat.requestPermissions(
+                        activity!!,
+                        permissionsRequired,
+                        PERMISSION_CALLBACK_CONSTANT
+                    )
+                }
+
+            } else {
+                //Previously Permission Request was cancelled with Don't Ask Again',
+
+                builder.setPositiveButton("Grant") { dialog, _ ->
+                    dialog.cancel()
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri = Uri.fromParts("package", context!!.packageName, null)
+                    intent.data = uri
+                    startActivityForResult(intent, REQUEST_PERMISSION_SETTING)
+                    Toast.makeText(context!!, "Go to Permissions and Allow Camera Permission", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        } else {
+            val permissionsRequired =
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+
+            builder.setTitle(R.string.permission_title)
+            builder.setMessage(R.string.permission_storage)
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    activity!!,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) && ActivityCompat.shouldShowRequestPermissionRationale(
+                    activity!!,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+            ) {
+                builder.setPositiveButton("Grant") { dialog, _ ->
+                    dialog.cancel()
+                    ActivityCompat.requestPermissions(
+                        activity!!,
+                        permissionsRequired,
+                        PERMISSION_CALLBACK_CONSTANT
+                    )
+                }
+            } else {
+                //Previously Permission Request was cancelled with Don't Ask Again',
+                builder.setPositiveButton("Grant") { dialog, _ ->
+                    dialog.cancel()
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri = Uri.fromParts("package", context!!.packageName, null)
+                    intent.data = uri
+                    startActivityForResult(intent, REQUEST_PERMISSION_SETTING)
+                    Toast.makeText(
+                        context!!,
+                        "Go to Permissions and Allow Storage Permission",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
+        builder.show()
+
+        return false
     }
 
 }

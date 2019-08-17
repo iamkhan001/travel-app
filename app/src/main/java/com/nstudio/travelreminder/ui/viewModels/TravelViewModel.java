@@ -1,12 +1,11 @@
 package com.nstudio.travelreminder.ui.viewModels;
 
 import android.app.Application;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import com.nstudio.travelreminder.database.AppDatabase;
+import androidx.lifecycle.MutableLiveData;
 import com.nstudio.travelreminder.database.TravelRepository;
-import com.nstudio.travelreminder.database.dao.TravelDao;
 import com.nstudio.travelreminder.database.entitiy.Travel;
 
 import java.util.List;
@@ -15,18 +14,34 @@ import java.util.concurrent.ExecutionException;
 public class TravelViewModel extends AndroidViewModel {
 
     private TravelRepository travelRepository;
-    private LiveData<List<Travel>> travels;
+    private MutableLiveData<List<Travel>> travels;
 
-    public TravelViewModel(@NonNull Application application) {
+    TravelViewModel(@NonNull Application application) {
         super(application);
-        AppDatabase db = AppDatabase.getInstance(application);
-        TravelDao travelDao = db.travelDao();
-        travels = travelDao.getAllTravels();
-        travelRepository = new TravelRepository(db,travelDao,travels);
+        travels = new MutableLiveData<>();
+        OnDataChangeListener changeListener = new OnDataChangeListener() {
+            @Override
+            public void onTravelListAdd(List<Travel> list) {
+
+                Log.e("vm", "list size " + list.size());
+                travels.setValue(list);
+
+            }
+        };
+        travelRepository = new TravelRepository(application, changeListener);
+        updateTravels();
     }
 
-    public LiveData<List<Travel>> getTravels() {
+    private void updateTravels() {
+        travelRepository.getmAllTravels();
+    }
+
+    public MutableLiveData<List<Travel>> getTravels() {
         return travels;
+    }
+
+    public void setTravels(List<Travel> list){
+        travels.setValue(list);
     }
 
     public void addTravel(Travel travel){
@@ -52,4 +67,8 @@ public class TravelViewModel extends AndroidViewModel {
         travelRepository.deleteTravel(travel);
     }
 
+
+    public interface OnDataChangeListener{
+        void onTravelListAdd(List<Travel> list);
+    }
 }
