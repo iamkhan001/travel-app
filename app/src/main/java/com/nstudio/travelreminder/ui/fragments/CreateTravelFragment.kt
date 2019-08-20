@@ -35,15 +35,22 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import android.provider.Settings
+import android.widget.GridLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import com.nstudio.travelreminder.database.model.Image
+import com.nstudio.travelreminder.ui.adapters.ImageListAdapter
+import com.nstudio.travelreminder.utils.AlarmUtils
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import kotlin.collections.ArrayList
 
 
 class CreateTravelFragment : Fragment() {
 
-    lateinit var activityInteractionListener: OnActivityInteractionListener
+    private lateinit var activityInteractionListener: OnActivityInteractionListener
 
     companion object {
 
@@ -56,9 +63,13 @@ class CreateTravelFragment : Fragment() {
 
 
     private lateinit var  timeFormat: SimpleDateFormat
+    private lateinit var  saveFormat: SimpleDateFormat
     private lateinit var  dateFormat: SimpleDateFormat
+    private lateinit var  decodeFormat: SimpleDateFormat
     private lateinit var  baseDateFormat: SimpleDateFormat
     private lateinit var  baseTimeFormat: SimpleDateFormat
+
+    private val TAG = CreateTravelFragment::class.java.simpleName
 
     private var mYear: Int = 0
     private var mMonth: Int = 0
@@ -75,6 +86,8 @@ class CreateTravelFragment : Fragment() {
     private var photoFile:File? = null
     private var photoURI: Uri? = null
     private var mCurrentPhotoPath = ""
+    private var imageList = ArrayList<Image>()
+    private var imageListAdapter = ImageListAdapter(imageList)
 
     private val methodSelectListener = ImageChooserDialog.OnMethodSelectListener { m ->
         if(m==0){
@@ -123,9 +136,11 @@ class CreateTravelFragment : Fragment() {
         viewModel = ViewModelProviders.of(activity!!).get(TravelViewModel::class.java)
 
         dateFormat = SimpleDateFormat("dd MMM yy", Locale.ENGLISH)
+        decodeFormat = SimpleDateFormat("dd MMM yy hh:mm a", Locale.ENGLISH)
         timeFormat = SimpleDateFormat("hh:mm a", Locale.ENGLISH)
         baseDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         baseTimeFormat = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
+        saveFormat = SimpleDateFormat("dd-MMM-yy-HH:mm:ss", Locale.ENGLISH)
 
 
         return inflater.inflate(R.layout.fragment_create_travel, container, false)
@@ -260,12 +275,74 @@ class CreateTravelFragment : Fragment() {
                     "$arrivalDate $arrivalTime"
                 )
 
-                viewModel.addTravel(travel)
+                val dateArrival = "$arrivalDate $arrivalTime"
+                val dateBoarding = "$boardingDate $boardingTime"
+
+                progressBar.visibility = View.VISIBLE
+
+                val id = viewModel.addTravel(travel)
+
+                try {
+
+                    val dateA = decodeFormat.parse(dateArrival)
+                    val dateB = decodeFormat.parse(dateBoarding)
+
+                    val alarm = AlarmUtils(context!!)
+
+                    if (dateA!=null){
+                        alarm.setAlarm(dateA.time)
+                    }else{
+                        Log.e(TAG,"Arrival Date is null")
+                    }
+
+                    if (dateB!=null){
+                        alarm.setAlarm(dateB.time)
+                    }else{
+                        Log.e(TAG,"Boarding Date is null")
+                    }
+
+                }catch (e:java.lang.Exception){
+                    e.printStackTrace()
+                }
+
+
+                for (image: Image in imageList){
+                    saveImage(image)
+                }
+
+                progressBar.visibility = View.GONE
+
                 Snackbar.make(v,"Journey Added Successfully",Snackbar.LENGTH_SHORT).show()
                 activity!!.supportFragmentManager.popBackStackImmediate()
 
             }
         }
+
+        rvLuggage.layoutManager = GridLayoutManager(context,2)
+        rvLuggage.adapter = imageListAdapter
+    }
+
+    private fun saveImage(image: Image) {
+
+        val root = context!!.getExternalFilesDir("").toString()
+        val myDir = File("$root/MyTravels")
+        myDir.mkdirs()
+        val n = saveFormat.format(Date())
+        val fName = "luggage--$n.jpg"
+        val file = File(myDir, fName)
+        Log.i(TAG, "" + file)
+        if (file.exists())
+            file.delete()
+        try {
+            val out = FileOutputStream(file)
+            image.bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+            image.name = fName
+            out.flush()
+            out.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
     }
 
     private fun setFromDate(day: Int, month: Int, year: Int) {
@@ -409,7 +486,8 @@ class CreateTravelFragment : Fragment() {
                     try {
 
                         val bitmap = getBitmapFromUri(photoURI!!)
-
+                        imageList.add(Image(bitmap,""))
+                        imageListAdapter.notifyItemInserted(imageList.size)
                         isPhotoCaptured = false
                     } catch (e:Exception) {
                         e.printStackTrace()
@@ -422,7 +500,8 @@ class CreateTravelFragment : Fragment() {
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(context!!.contentResolver, photoURI)
                 bitmap = cropAndScale(bitmap, 300)
-
+                imageList.add(Image(bitmap,""))
+                imageListAdapter.notifyItemInserted(imageList.size)
                 isPhotoCaptured = true
             } catch (e:Exception) {
                 e.printStackTrace()
@@ -432,15 +511,15 @@ class CreateTravelFragment : Fragment() {
 
     }
 
-    fun cropAndScale(source: Bitmap, scale: Int): Bitmap {
-        var source = source
-        val factor = if (source.height <= source.width) source.height else source.width
-        val longer = if (source.height >= source.width) source.height else source.width
-        val x = if (source.height >= source.width) 0 else (longer - factor) / 2
-        val y = if (source.height <= source.width) 0 else (longer - factor) / 2
-        source = Bitmap.createBitmap(source, x, y, factor, factor)
-        source = Bitmap.createScaledBitmap(source, scale, scale, false)
-        return source
+    private fun cropAndScale(source: Bitmap, scale: Int): Bitmap {
+        var src = source
+        val factor = if (src.height <= src.width) src.height else src.width
+        val longer = if (src.height >= src.width) src.height else src.width
+        val x = if (src.height >= src.width) 0 else (longer - factor) / 2
+        val y = if (src.height <= src.width) 0 else (longer - factor) / 2
+        src = Bitmap.createBitmap(src, x, y, factor, factor)
+        src = Bitmap.createScaledBitmap(src, scale, scale, false)
+        return src
     }
 
     private fun checkPermissions(): Boolean {
