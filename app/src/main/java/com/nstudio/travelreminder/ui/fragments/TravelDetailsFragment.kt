@@ -2,6 +2,7 @@ package com.nstudio.travelreminder.ui.fragments
 
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.Log
@@ -10,14 +11,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.GridLayoutManager
 
 import com.nstudio.travelreminder.R
+import com.nstudio.travelreminder.database.model.Image
+import com.nstudio.travelreminder.ui.adapters.ImageListAdapter
 import com.nstudio.travelreminder.ui.viewModels.TravelViewModel
 import com.nstudio.travelreminder.utils.OnActivityInteractionListener
 import kotlinx.android.synthetic.main.fragment_travel_detials.*
+import java.io.File
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
-
 
 class TravelDetailsFragment : Fragment() {
 
@@ -88,6 +93,28 @@ class TravelDetailsFragment : Fragment() {
 
             }
 
+            try {
+                rvLuggage.layoutManager = GridLayoutManager(context,2)
+                val imageNames = travel.images
+                val imageList = ArrayList<Image>()
+                val root = context!!.getExternalFilesDir("").toString()
+
+                for(image in imageNames){
+                    val p = "$root/MyTravels/${image.image}"
+                    val file = File(p)
+                    if (file.exists()){
+                        imageList.add(Image(BitmapFactory.decodeFile(p),""))
+                    }else{
+                        Log.e("Image","FNE >> $p")
+                    }
+                }
+
+
+                rvLuggage.adapter = ImageListAdapter(imageList)
+
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
 
 
         }

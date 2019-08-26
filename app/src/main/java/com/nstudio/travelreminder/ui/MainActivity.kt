@@ -241,13 +241,13 @@ class MainActivity : AppCompatActivity(), OnActivityInteractionListener{
             val builder = AlertDialog.Builder(context)
             builder.setTitle(R.string.permission_title)
             builder.setMessage(R.string.permission_message)
-            builder.setPositiveButton("Grant") { dialog, which ->
+            builder.setPositiveButton("Grant") { dialog, _ ->
                 dialog.cancel()
                 ActivityCompat.requestPermissions(this@MainActivity, permissionsRequired, PERMISSION_CALLBACK_CONSTANT)
             }
             builder.setNegativeButton(
                 "Cancel"
-            ) { dialog, which -> dialog.cancel() }
+            ) { dialog, _ -> dialog.cancel() }
             builder.show()
         }
 

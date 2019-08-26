@@ -5,9 +5,11 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import com.nstudio.travelreminder.data.TravelData;
 import com.nstudio.travelreminder.database.TravelRepository;
 import com.nstudio.travelreminder.database.entitiy.Travel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -44,11 +46,11 @@ public class TravelViewModel extends AndroidViewModel {
         travels.setValue(list);
     }
 
-    public void addTravel(Travel travel){
-        travelRepository.insertTravel(travel);
+    public void addTravel(Travel travel, ArrayList<String> luggageImages){
+        travelRepository.insertTravel(travel,luggageImages);
     }
 
-    public Travel getTravel(int id){
+    public TravelData getTravel(int id){
         try {
             return travelRepository.getTravel(id);
         } catch (ExecutionException e) {

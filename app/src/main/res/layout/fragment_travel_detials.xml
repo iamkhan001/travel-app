@@ -163,6 +163,7 @@
                 android:layout_height="wrap_content"/>
 
         <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvLuggage"
                 android:layout_margin="@dimen/space_large"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="2"

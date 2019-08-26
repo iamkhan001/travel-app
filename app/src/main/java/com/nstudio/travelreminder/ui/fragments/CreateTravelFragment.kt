@@ -35,7 +35,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import android.provider.Settings
-import android.widget.GridLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.GridLayoutManager
@@ -64,10 +63,12 @@ class CreateTravelFragment : Fragment() {
 
     private lateinit var  timeFormat: SimpleDateFormat
     private lateinit var  saveFormat: SimpleDateFormat
+    private lateinit var  fileFormat: SimpleDateFormat
     private lateinit var  dateFormat: SimpleDateFormat
     private lateinit var  decodeFormat: SimpleDateFormat
     private lateinit var  baseDateFormat: SimpleDateFormat
     private lateinit var  baseTimeFormat: SimpleDateFormat
+    private var luggageImages = arrayListOf<String>()
 
     private val TAG = CreateTravelFragment::class.java.simpleName
 
@@ -141,6 +142,7 @@ class CreateTravelFragment : Fragment() {
         baseDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         baseTimeFormat = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
         saveFormat = SimpleDateFormat("dd-MMM-yy-HH:mm:ss", Locale.ENGLISH)
+        fileFormat = SimpleDateFormat("dd-MMM-yy-HHmmss", Locale.ENGLISH)
 
 
         return inflater.inflate(R.layout.fragment_create_travel, container, false)
@@ -172,7 +174,7 @@ class CreateTravelFragment : Fragment() {
             mMonth = c.get(Calendar.MONTH)
             mDay = c.get(Calendar.DAY_OF_MONTH)
             val datePickerDialog = DatePickerDialog(context!!,
-                { view, year, monthOfYear, dayOfMonth -> setFromDate(dayOfMonth, monthOfYear + 1, year) },
+                { _, year, monthOfYear, dayOfMonth -> setFromDate(dayOfMonth, monthOfYear + 1, year) },
                 mYear,
                 mMonth,
                 mDay
@@ -188,7 +190,7 @@ class CreateTravelFragment : Fragment() {
             mMonth = c.get(Calendar.MONTH)
             mDay = c.get(Calendar.DAY_OF_MONTH)
             val datePickerDialog = DatePickerDialog(context!!,
-                { view, year, monthOfYear, dayOfMonth -> setToDate(dayOfMonth, monthOfYear + 1, year) },
+                { _, year, monthOfYear, dayOfMonth -> setToDate(dayOfMonth, monthOfYear + 1, year) },
                 mYear,
                 mMonth,
                 mDay
@@ -202,7 +204,7 @@ class CreateTravelFragment : Fragment() {
             mHour = c.get(Calendar.HOUR)
             mMinute = c.get(Calendar.MINUTE)
             val timePickerDialog = TimePickerDialog(context,
-                { view, hourOfDay, minute -> setFromTime(hourOfDay, minute) }, mHour, mMinute, false
+                { _, hourOfDay, minute -> setFromTime(hourOfDay, minute) }, mHour, mMinute, false
             )
             timePickerDialog.show()
 
@@ -212,7 +214,7 @@ class CreateTravelFragment : Fragment() {
             mHour = c.get(Calendar.HOUR)
             mMinute = c.get(Calendar.MINUTE)
             val timePickerDialog = TimePickerDialog(context,
-                { view, hourOfDay, minute -> setToTime(hourOfDay, minute) }, mHour, mMinute, false
+                { _, hourOfDay, minute -> setToTime(hourOfDay, minute) }, mHour, mMinute, false
             )
             timePickerDialog.show()
         }
@@ -280,7 +282,7 @@ class CreateTravelFragment : Fragment() {
 
                 progressBar.visibility = View.VISIBLE
 
-                val id = viewModel.addTravel(travel)
+                viewModel.addTravel(travel,luggageImages)
 
                 try {
 
@@ -305,11 +307,6 @@ class CreateTravelFragment : Fragment() {
                     e.printStackTrace()
                 }
 
-
-                for (image: Image in imageList){
-                    saveImage(image)
-                }
-
                 progressBar.visibility = View.GONE
 
                 Snackbar.make(v,"Journey Added Successfully",Snackbar.LENGTH_SHORT).show()
@@ -327,8 +324,8 @@ class CreateTravelFragment : Fragment() {
         val root = context!!.getExternalFilesDir("").toString()
         val myDir = File("$root/MyTravels")
         myDir.mkdirs()
-        val n = saveFormat.format(Date())
-        val fName = "luggage--$n.jpg"
+        val n = fileFormat.format(Date())
+        val fName = "luggage-$n.jpg"
         val file = File(myDir, fName)
         Log.i(TAG, "" + file)
         if (file.exists())
@@ -337,6 +334,7 @@ class CreateTravelFragment : Fragment() {
             val out = FileOutputStream(file)
             image.bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
             image.name = fName
+            luggageImages.add(fName)
             out.flush()
             out.close()
         } catch (e: Exception) {
@@ -444,6 +442,7 @@ class CreateTravelFragment : Fragment() {
             storageDir      /* directory */
         )
 
+
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.absolutePath
         return image
@@ -460,11 +459,11 @@ class CreateTravelFragment : Fragment() {
     }
 
     private fun galleryAddPic() {
-        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-        val f = File(mCurrentPhotoPath)
-        val contentUri = Uri.fromFile(f)
-        mediaScanIntent.data = contentUri
-        context!!.sendBroadcast(mediaScanIntent)
+//        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+//        val f = File(mCurrentPhotoPath)
+//        val contentUri = Uri.fromFile(f)
+//        mediaScanIntent.data = contentUri
+//        context!!.sendBroadcast(mediaScanIntent)
     }
 
 
@@ -486,6 +485,7 @@ class CreateTravelFragment : Fragment() {
                     try {
 
                         val bitmap = getBitmapFromUri(photoURI!!)
+                        saveImage(Image(bitmap,""))
                         imageList.add(Image(bitmap,""))
                         imageListAdapter.notifyItemInserted(imageList.size)
                         isPhotoCaptured = false
@@ -501,6 +501,8 @@ class CreateTravelFragment : Fragment() {
                 bitmap = MediaStore.Images.Media.getBitmap(context!!.contentResolver, photoURI)
                 bitmap = cropAndScale(bitmap, 300)
                 imageList.add(Image(bitmap,""))
+                saveImage(Image(bitmap,""))
+
                 imageListAdapter.notifyItemInserted(imageList.size)
                 isPhotoCaptured = true
             } catch (e:Exception) {
@@ -666,7 +668,7 @@ class CreateTravelFragment : Fragment() {
             }
         }
 
-        builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
+        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
         builder.show()
 
         return false
