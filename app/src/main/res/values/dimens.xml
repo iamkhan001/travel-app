@@ -18,6 +18,6 @@
     <dimen name="size_n">40dp</dimen>
     <dimen name="size_l">60dp</dimen>
     <dimen name="size_xl">80dp</dimen>
-    <dimen name="size_card">120dp</dimen>
+    <dimen name="size_card">135dp</dimen>
     <dimen name="size_image">100dp</dimen>
 </resources>

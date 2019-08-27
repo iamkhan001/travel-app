@@ -37,6 +37,7 @@ import android.os.Environment
 import android.provider.Settings
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.nstudio.travelreminder.database.model.Image
 import com.nstudio.travelreminder.ui.adapters.ImageListAdapter
@@ -68,9 +69,17 @@ class CreateTravelFragment : Fragment() {
     private lateinit var  decodeFormat: SimpleDateFormat
     private lateinit var  baseDateFormat: SimpleDateFormat
     private lateinit var  baseTimeFormat: SimpleDateFormat
+    private lateinit var parentView : View
+
     private var luggageImages = arrayListOf<String>()
 
     private val TAG = CreateTravelFragment::class.java.simpleName
+
+    private var imageList = ArrayList<Image>()
+
+
+
+    private lateinit var imageListAdapter:ImageListAdapter
 
     private var mYear: Int = 0
     private var mMonth: Int = 0
@@ -87,8 +96,6 @@ class CreateTravelFragment : Fragment() {
     private var photoFile:File? = null
     private var photoURI: Uri? = null
     private var mCurrentPhotoPath = ""
-    private var imageList = ArrayList<Image>()
-    private var imageListAdapter = ImageListAdapter(imageList)
 
     private val methodSelectListener = ImageChooserDialog.OnMethodSelectListener { m ->
         if(m==0){
@@ -151,9 +158,34 @@ class CreateTravelFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val clickListener = object : ImageListAdapter.OnImageClickListener {
+            override fun onRemove(index: Int) {
+                removeFile(imageList[index].name)
+                imageList.removeAt(index)
+                imageListAdapter.notifyItemRemoved(index)
+
+            }
+
+            override fun onClick(index: Int) {
+                val path = imageList[index].name
+                val bundle = Bundle()
+                bundle.putString("path",path)
+                parentView.findNavController().navigate(R.id.showBagFragment,bundle)
+            }
+        }
+
+        imageListAdapter  = ImageListAdapter(imageList,clickListener)
+
         init()
 
 
+    }
+
+    private fun removeFile(name: String) {
+        val file = File(name)
+        if (file.exists()){
+            file.delete()
+        }
     }
 
     private fun init(){
@@ -319,7 +351,7 @@ class CreateTravelFragment : Fragment() {
         rvLuggage.adapter = imageListAdapter
     }
 
-    private fun saveImage(image: Image) {
+    private fun saveImage(image: Image) :String {
 
         val root = context!!.getExternalFilesDir("").toString()
         val myDir = File("$root/MyTravels")
@@ -337,10 +369,13 @@ class CreateTravelFragment : Fragment() {
             luggageImages.add(fName)
             out.flush()
             out.close()
+
+            return file.absolutePath
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
+        return ""
     }
 
     private fun setFromDate(day: Int, month: Int, year: Int) {
@@ -485,8 +520,9 @@ class CreateTravelFragment : Fragment() {
                     try {
 
                         val bitmap = getBitmapFromUri(photoURI!!)
-                        saveImage(Image(bitmap,""))
-                        imageList.add(Image(bitmap,""))
+
+                        imageList.add(Image(bitmap,saveImage(Image(bitmap,""))))
+
                         imageListAdapter.notifyItemInserted(imageList.size)
                         isPhotoCaptured = false
                     } catch (e:Exception) {
@@ -499,9 +535,9 @@ class CreateTravelFragment : Fragment() {
             var bitmap:Bitmap
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(context!!.contentResolver, photoURI)
-                bitmap = cropAndScale(bitmap, 300)
-                imageList.add(Image(bitmap,""))
-                saveImage(Image(bitmap,""))
+                //bitmap = cropAndScale(bitmap, 300)
+
+                imageList.add(Image(bitmap,saveImage(Image(bitmap,""))))
 
                 imageListAdapter.notifyItemInserted(imageList.size)
                 isPhotoCaptured = true

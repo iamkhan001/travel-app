@@ -7,18 +7,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.lifecycle.Observer
 
 import com.nstudio.travelreminder.R
 import com.nstudio.travelreminder.ui.viewModels.TravelViewModel
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.nstudio.travelreminder.database.entitiy.Travel
 import com.nstudio.travelreminder.ui.adapters.JourneyListAdapter
-import com.nstudio.travelreminder.ui.viewModels.ViewModelFactory
 import kotlinx.android.synthetic.main.fragment_travels.*
 
 
@@ -61,6 +58,9 @@ class TravelListFragment : Fragment() {
                 if (list!=null){
                     Log.e(TAG,"list > "+list.size)
                     val journeyListAdapter = JourneyListAdapter(list,clickListener)
+
+                    val controller = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_from_bottom)
+                    rvTravels.layoutAnimation = controller
                     rvTravels.layoutManager = LinearLayoutManager(context)
                     rvTravels.adapter = journeyListAdapter
 

@@ -28,7 +28,8 @@
 
                     <ImageView
                             android:id="@+id/imgLogo"
-                            android:src="@mipmap/ic_launcher"
+                            android:src="@drawable/ic_luggage"
+                            android:tint="@color/white"
                             android:padding="@dimen/space_small"
                             android:layout_width="@dimen/size_sm"
                             android:layout_height="@dimen/size_sm" />

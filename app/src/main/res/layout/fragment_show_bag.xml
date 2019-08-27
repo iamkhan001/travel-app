@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="#000"
+              android:orientation="vertical"
+             tools:context=".ui.fragments.ShowBagFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+            android:background="#000"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <ImageView
+                        android:id="@+id/imgBack"
+                        android:src="@drawable/ic_arrow_back"
+                        android:layout_width="@dimen/size_sm"
+                        android:layout_height="@dimen/size_sm" />
+
+                <TextView
+                        android:id="@+id/tvTitle"
+                        android:layout_toEndOf="@id/imgBack"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/space_normal"
+                        android:paddingStart="@dimen/space_normal"
+                        android:paddingEnd="@dimen/space_normal"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_l"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+
+            </RelativeLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <ImageView
+            android:id="@+id/imgBag"
+            android:src="@drawable/ic_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/hello_blank_fragment"/>
+
+</LinearLayout>

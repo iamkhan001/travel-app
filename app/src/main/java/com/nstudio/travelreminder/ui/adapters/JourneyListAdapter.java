@@ -1,5 +1,7 @@
 package com.nstudio.travelreminder.ui.adapters;
 
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.nstudio.travelreminder.R;
+import com.nstudio.travelreminder.data.TravelData;
 import com.nstudio.travelreminder.database.entitiy.Travel;
+import com.nstudio.travelreminder.utils.ColorPicker;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,13 +21,13 @@ import java.util.Locale;
 
 public class JourneyListAdapter extends RecyclerView.Adapter<JourneyListAdapter.MyViewHolder> {
 
-    private List<Travel> list;
+    private List<TravelData> list;
     private SimpleDateFormat formatBase;
     private SimpleDateFormat formatTime;
     private SimpleDateFormat formatMonth;
     private OnTravelClickListener clickListener;
 
-    public JourneyListAdapter(List<Travel> list,OnTravelClickListener clickListener) {
+    public JourneyListAdapter(List<TravelData> list,OnTravelClickListener clickListener) {
         this.list = list;
         this.clickListener = clickListener;
         formatBase =  new SimpleDateFormat("dd MMM yy hh:mm a", Locale.ENGLISH);
@@ -41,7 +45,7 @@ public class JourneyListAdapter extends RecyclerView.Adapter<JourneyListAdapter.
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-        Travel travel = list.get(position);
+        TravelData travel = list.get(position);
 
         holder.tvFrom.setText(travel.getFrom());
         holder.tvTo.setText(travel.getTo());
@@ -62,12 +66,18 @@ public class JourneyListAdapter extends RecyclerView.Adapter<JourneyListAdapter.
             String dayOfTheWeek = (String) DateFormat.format("EEEE", date);
             String day          = (String) DateFormat.format("dd",   date);
 
-            String time = day+"\n"+dayOfTheWeek;
-            holder.tvDay.setText(time);
+            holder.tvDay.setText(dayOfTheWeek);
+            holder.tvDate.setText(day);
+
+            holder.bgDate.setColor(Color.parseColor(ColorPicker.getColor(day)));
+
+            holder.tvBags.setText(travel.getBagCount());
 
         }catch (Exception e){
             e.printStackTrace();
         }
+
+
 
     }
 
@@ -78,16 +88,20 @@ public class JourneyListAdapter extends RecyclerView.Adapter<JourneyListAdapter.
 
     class MyViewHolder extends RecyclerView.ViewHolder{
 
-        private TextView tvDay,tvMonth,tvFrom,tvTo,tvTime;
+        private TextView tvDay,tvMonth,tvFrom,tvTo,tvTime,tvDate,tvBags;
+        private GradientDrawable bgDate;
 
         MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             tvDay = itemView.findViewById(R.id.tvDay);
+            tvDate = itemView.findViewById(R.id.tvDate);
             tvMonth = itemView.findViewById(R.id.tvMonth);
             tvFrom = itemView.findViewById(R.id.tvFrom);
             tvTo = itemView.findViewById(R.id.tvTo);
             tvTime = itemView.findViewById(R.id.tvTime);
+            bgDate = (GradientDrawable) tvDate.getBackground();
+            tvBags = itemView.findViewById(R.id.tvLuggageCount);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -99,7 +113,7 @@ public class JourneyListAdapter extends RecyclerView.Adapter<JourneyListAdapter.
     }
 
     public interface OnTravelClickListener{
-        void onTravelClick(Travel travel);
+        void onTravelClick(TravelData travel);
     }
 
 }

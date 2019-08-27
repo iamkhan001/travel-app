@@ -52,6 +52,10 @@ class TravelRepository (application: Application, private val onDataChangeListen
         DeleteAllTravelsAsync(travelDao,luggageDao,onDataChangeListener).execute()
     }
 
+    fun removeLuggage(luggage: Luggage) {
+        DeleteLuggageAsync(luggageDao).execute(luggage)
+    }
+
 
     companion object{
 
@@ -67,14 +71,25 @@ class TravelRepository (application: Application, private val onDataChangeListen
 
         }
 
-        private class GetTravelList (val travelDao: TravelDao,val luggageDao: LuggageDao, val onDataChangeListener: TravelViewModel.OnDataChangeListener) : AsyncTask<Int,Void, List<Travel>>(){
+        private class GetTravelList (val travelDao: TravelDao,val luggageDao: LuggageDao, val onDataChangeListener: TravelViewModel.OnDataChangeListener) : AsyncTask<Int,Void, List<TravelData>>(){
 
 
-            override fun doInBackground(vararg ids: Int?): List<Travel> {
-                return travelDao.getAllTravelsVal()
+            override fun doInBackground(vararg ids: Int?): List<TravelData> {
+                val travels = travelDao.getAllTravelsVal()
+
+                val list = ArrayList<TravelData>()
+
+                for (travel in travels){
+                    val data = TravelData(travel.id,travel.from,travel.to,travel.boardingTime,travel.arrivalTime)
+                    data.bagCount = luggageDao.countLuggages(travel.id!!)
+                    list.add(data)
+                }
+
+                return list
+
             }
 
-            override fun onPostExecute(result: List<Travel>?) {
+            override fun onPostExecute(result: List<TravelData>?) {
                 super.onPostExecute(result)
                 onDataChangeListener.onTravelListAdd(result)
             }
@@ -132,6 +147,17 @@ class TravelRepository (application: Application, private val onDataChangeListen
                 super.onPostExecute(result)
                 GetTravelList(travelDao,luggageDao,onDataChangeListener).execute()
             }
+        }
+
+        private class DeleteLuggageAsync internal constructor(private val luggageDao: LuggageDao) :
+            AsyncTask<Luggage, Void, Void>() {
+
+            override fun doInBackground(vararg luggage: Luggage?): Void? {
+                luggageDao.delete(luggage[0]!!)
+                return null
+            }
+
+
         }
 
         private class DeleteAllTravelsAsync internal constructor(private val travelDao: TravelDao,private val luggageDao: LuggageDao,private val onDataChangeListener: TravelViewModel.OnDataChangeListener) :

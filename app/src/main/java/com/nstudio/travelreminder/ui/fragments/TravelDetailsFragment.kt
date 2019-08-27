@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 
 import com.nstudio.travelreminder.R
@@ -28,6 +29,7 @@ class TravelDetailsFragment : Fragment() {
 
     lateinit var viewModel: TravelViewModel
     private lateinit var activityInteractionListener:OnActivityInteractionListener
+    private lateinit var imageListAdapter: ImageListAdapter
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -103,14 +105,40 @@ class TravelDetailsFragment : Fragment() {
                     val p = "$root/MyTravels/${image.image}"
                     val file = File(p)
                     if (file.exists()){
-                        imageList.add(Image(BitmapFactory.decodeFile(p),""))
+                        val img = Image(BitmapFactory.decodeFile(p),file.absolutePath)
+                        img.luggageId = image.id!!
+                        imageList.add(img)
                     }else{
                         Log.e("Image","FNE >> $p")
                     }
                 }
 
+                val clickListener = object : ImageListAdapter.OnImageClickListener {
+                    override fun onRemove(index: Int) {
 
-                rvLuggage.adapter = ImageListAdapter(imageList)
+                        viewModel.removeLuggage(imageNames[index])
+                        val name = imageList[index].name
+                        val file = File(name)
+                        if (file.exists()){
+                            file.delete()
+                        }
+
+                        imageListAdapter.notifyItemRemoved(index)
+
+
+                    }
+
+                    override fun onClick(index: Int) {
+                        val path = imageNames[index].image
+                        val bundle = Bundle()
+                        bundle.putString("path",path)
+                        view.findNavController().navigate(R.id.showBagFragment,bundle)
+
+                    }
+                }
+
+                imageListAdapter = ImageListAdapter(imageList,clickListener)
+                rvLuggage.adapter = imageListAdapter
 
             }catch (e:Exception){
                 e.printStackTrace()

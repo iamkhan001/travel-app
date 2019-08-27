@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import com.nstudio.travelreminder.data.TravelData;
 import com.nstudio.travelreminder.database.TravelRepository;
+import com.nstudio.travelreminder.database.entitiy.Luggage;
 import com.nstudio.travelreminder.database.entitiy.Travel;
 
 import java.util.ArrayList;
@@ -16,14 +17,14 @@ import java.util.concurrent.ExecutionException;
 public class TravelViewModel extends AndroidViewModel {
 
     private TravelRepository travelRepository;
-    private MutableLiveData<List<Travel>> travels;
+    private MutableLiveData<List<TravelData>> travels;
 
     TravelViewModel(@NonNull Application application) {
         super(application);
         travels = new MutableLiveData<>();
         OnDataChangeListener changeListener = new OnDataChangeListener() {
             @Override
-            public void onTravelListAdd(List<Travel> list) {
+            public void onTravelListAdd(List<TravelData> list) {
 
                 Log.e("vm", "list size " + list.size());
                 travels.setValue(list);
@@ -38,11 +39,11 @@ public class TravelViewModel extends AndroidViewModel {
         travelRepository.getmAllTravels();
     }
 
-    public MutableLiveData<List<Travel>> getTravels() {
+    public MutableLiveData<List<TravelData>> getTravels() {
         return travels;
     }
 
-    public void setTravels(List<Travel> list){
+    public void setTravels(List<TravelData> list){
         travels.setValue(list);
     }
 
@@ -69,8 +70,12 @@ public class TravelViewModel extends AndroidViewModel {
         travelRepository.deleteTravel(travel);
     }
 
+    public void removeLuggage(Luggage luggage) {
+        travelRepository.removeLuggage(luggage);
+    }
+
 
     public interface OnDataChangeListener{
-        void onTravelListAdd(List<Travel> list);
+        void onTravelListAdd(List<TravelData> list);
     }
 }

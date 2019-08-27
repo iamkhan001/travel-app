@@ -30,7 +30,6 @@
                     <ImageView
                             android:id="@+id/imgBackDetails"
                             android:src="@drawable/ic_arrow_back"
-                            android:padding="@dimen/space_small"
                             android:layout_width="@dimen/size_sm"
                             android:layout_height="@dimen/size_sm" />
 

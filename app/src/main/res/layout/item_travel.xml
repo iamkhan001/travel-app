@@ -21,15 +21,26 @@
                 android:orientation="vertical">
 
             <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_margin="@dimen/space_normal"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:text="15"
+                    android:gravity="center"
+                    android:textSize="@dimen/text_h"
+                    android:background="@drawable/background_circle"
+                    android:layout_width="@dimen/size_l"
+                    android:layout_height="@dimen/size_l"/>
+
+            <TextView
                     android:id="@+id/tvDay"
                     android:textSize="@dimen/text_l"
                     android:textColor="@color/colorPrimary"
-                    android:text="01\nFriday"
-                    android:layout_weight="1"
+                    android:text="Friday"
                     android:gravity="center"
                     android:maxLines="2"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"/>
+                    android:layout_height="wrap_content"/>
 
             <TextView
                     android:id="@+id/tvTime"
@@ -87,6 +98,21 @@
                     android:ellipsize="end"
                     android:textSize="@dimen/text_l"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+            <TextView
+                    android:id="@+id/tvLuggageCount"
+                    android:gravity="end"
+                    android:drawableStart="@drawable/ic_luggage"
+                    android:maxLines="1"
+                    android:layout_margin="@dimen/space_normal"
+                    android:text="0"
+                    android:ellipsize="end"
+                    android:drawablePadding="@dimen/space_normal"
+                    android:layout_gravity="end"
+                    android:textSize="@dimen/text_n"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
         </LinearLayout>
