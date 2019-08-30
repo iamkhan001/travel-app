@@ -32,6 +32,7 @@ import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Environment
 import android.provider.Settings
@@ -520,8 +521,10 @@ class CreateTravelFragment : Fragment() {
                     try {
 
                         val bitmap = getBitmapFromUri(photoURI!!)
+                        val thumbImg = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(photoURI!!.path), 200, 200)
 
-                        imageList.add(Image(bitmap,saveImage(Image(bitmap,""))))
+
+                        imageList.add(Image(thumbImg,saveImage(Image(bitmap,""))))
 
                         imageListAdapter.notifyItemInserted(imageList.size)
                         isPhotoCaptured = false
@@ -535,9 +538,11 @@ class CreateTravelFragment : Fragment() {
             var bitmap:Bitmap
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(context!!.contentResolver, photoURI)
+                val thumbImg = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(photoURI!!.path), 200, 200)
+
                 //bitmap = cropAndScale(bitmap, 300)
 
-                imageList.add(Image(bitmap,saveImage(Image(bitmap,""))))
+                imageList.add(Image(thumbImg,saveImage(Image(bitmap,""))))
 
                 imageListAdapter.notifyItemInserted(imageList.size)
                 isPhotoCaptured = true

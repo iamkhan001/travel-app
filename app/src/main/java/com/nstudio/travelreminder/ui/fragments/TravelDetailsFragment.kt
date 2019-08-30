@@ -24,6 +24,9 @@ import java.io.File
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
+import android.media.ThumbnailUtils
+
+
 
 class TravelDetailsFragment : Fragment() {
 
@@ -105,8 +108,11 @@ class TravelDetailsFragment : Fragment() {
                     val p = "$root/MyTravels/${image.image}"
                     val file = File(p)
                     if (file.exists()){
-                        val img = Image(BitmapFactory.decodeFile(p),file.absolutePath)
+                        val thumbImg = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(p), 200, 200)
+
+                        val img = Image(thumbImg,file.absolutePath)
                         img.luggageId = image.id!!
+
                         imageList.add(img)
                     }else{
                         Log.e("Image","FNE >> $p")
@@ -116,6 +122,8 @@ class TravelDetailsFragment : Fragment() {
                 val clickListener = object : ImageListAdapter.OnImageClickListener {
                     override fun onRemove(index: Int) {
 
+                        Log.e("details","remove at $index")
+
                         viewModel.removeLuggage(imageNames[index])
                         val name = imageList[index].name
                         val file = File(name)
@@ -123,6 +131,7 @@ class TravelDetailsFragment : Fragment() {
                             file.delete()
                         }
 
+                        imageList.removeAt(index)
                         imageListAdapter.notifyItemRemoved(index)
 
 
@@ -143,7 +152,6 @@ class TravelDetailsFragment : Fragment() {
             }catch (e:Exception){
                 e.printStackTrace()
             }
-
 
         }
 
