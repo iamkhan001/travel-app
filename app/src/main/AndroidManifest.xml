@@ -23,11 +23,9 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".utils.AlarmReceiver">
-            <intent-filter>
-                <action android:name="com.example.helloandroid.alarms" />
-            </intent-filter>
-        </receiver>
+        <receiver android:name=".utils.AlarmReceiver"
+                  android:exported="false" />
+
 
         <provider
                 android:name="androidx.core.content.FileProvider"
