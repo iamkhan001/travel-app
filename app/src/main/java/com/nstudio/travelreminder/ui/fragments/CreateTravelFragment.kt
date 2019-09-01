@@ -175,7 +175,7 @@ class CreateTravelFragment : Fragment() {
             }
         }
 
-        imageListAdapter  = ImageListAdapter(imageList,clickListener)
+        imageListAdapter  = ImageListAdapter(context!!,imageList,clickListener)
 
         init()
 
@@ -365,13 +365,13 @@ class CreateTravelFragment : Fragment() {
             file.delete()
         try {
             val out = FileOutputStream(file)
-            image.bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+            image.bitmap!!.compress(Bitmap.CompressFormat.JPEG, 90, out)
             image.name = fName
             luggageImages.add(fName)
             out.flush()
             out.close()
 
-            return file.absolutePath
+            return fName
         } catch (e: Exception) {
             e.printStackTrace()
         }

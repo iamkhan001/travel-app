@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +22,14 @@ import java.util.Objects;
 
 public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyViewHolder> {
 
+    private Context context;
     private List<Image> list;
     private OnImageClickListener onImageClickListener;
 
-    public ImageListAdapter( List<Image> list,OnImageClickListener onImageClickListener) {
+    public ImageListAdapter(Context context, List<Image> list,OnImageClickListener onImageClickListener) {
         this.list = list;
         this.onImageClickListener = onImageClickListener;
+        this.context = context;
     }
 
     @NonNull
@@ -39,7 +42,11 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-     holder.imgLuggage.setImageBitmap(list.get(position).getBitmap());
+     //holder.imgLuggage.setImageBitmap(list.get(position).getBitmap());
+
+        Log.e("Image","name  "+list.get(position).getName());
+
+     new AsyncLoadImage(context,list.get(position).getName(),holder.imgLuggage).execute();
 
 
     }
@@ -97,12 +104,13 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
         @Override
         protected Bitmap doInBackground(Void... voids) {
 
-            String p = root+"/MyTravels/"+name;
-            File file = new File(p);
+            String path = root+"/MyTravels/"+name;
+            File file = new File(path);
             if (file.exists()){
-                return ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(p), 200, 200);
+                return ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(path), 200, 200);
+            }else {
+                Log.e("ImageLoader","FNF > "+path);
             }
-
 
             return null;
         }

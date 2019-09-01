@@ -3,6 +3,7 @@ package com.nstudio.travelreminder.ui.adapters;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +72,7 @@ public class JourneyListAdapter extends RecyclerView.Adapter<JourneyListAdapter.
 
             holder.bgDate.setColor(Color.parseColor(ColorPicker.getColor(day)));
 
-            holder.tvBags.setText(travel.getBagCount());
+
 
         }catch (Exception e){
             e.printStackTrace();

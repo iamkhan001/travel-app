@@ -65,6 +65,7 @@ class TravelRepository (application: Application, private val onDataChangeListen
             override fun doInBackground(vararg ids: Int?): TravelData {
                 val travel = travelDao.getTravelById(ids[0]!!)
                 val travelData = TravelData(travel.id,travel.from,travel.to,travel.boardingTime,travel.arrivalTime)
+
                 travelData.images = luggageDao.getAll(travel.id!!)
                 return travelData
             }
